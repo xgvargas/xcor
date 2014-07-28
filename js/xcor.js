@@ -47,7 +47,7 @@ http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
         this.externalrad = this.center;
         this.internalrad = this.externalrad*(1-this.ops.border);
         this.triCoords = Array();
-        this.hue = 0;
+        this.hue = 45;
         this.sat = 50;
         this.val = 50;
         this.onRing = false;
@@ -154,16 +154,17 @@ http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
             rad = (this.hue*2*Math.PI)/360;
             this.triCoords[0] = this.center+this.internalrad*Math.cos(rad);  //X of hue point
             this.triCoords[1] = this.center-this.internalrad*Math.sin(rad);  //Y
-            var rad2 = (((this.hue+120)%360)*2*Math.PI)/360;
-            this.triCoords[2] = this.center+this.internalrad*Math.cos(rad2); //X of black edge
-            this.triCoords[3] = this.center-this.internalrad*Math.sin(rad2); //Y
-            rad2 = (((this.hue+240)%360)*2*Math.PI)/360;
-            this.triCoords[4] = this.center+this.internalrad*Math.cos(rad2); //X of white edge
-            this.triCoords[5] = this.center-this.internalrad*Math.sin(rad2); //Y
+            rad = (((this.hue+120)%360)*2*Math.PI)/360;
+            this.triCoords[2] = this.center+this.internalrad*Math.cos(rad); //X of black edge
+            this.triCoords[3] = this.center-this.internalrad*Math.sin(rad); //Y
+            rad = (((this.hue+240)%360)*2*Math.PI)/360;
+            this.triCoords[4] = this.center+this.internalrad*Math.cos(rad); //X of white edge
+            this.triCoords[5] = this.center-this.internalrad*Math.sin(rad); //Y
 
             //draw triangle
             //TODO fill in with gradient color from hue
             this.dc.lineWidth = 1;
+            this.dc.beginPath();
             this.dc.moveTo(this.triCoords[0], this.triCoords[1]);
             this.dc.lineTo(this.triCoords[2], this.triCoords[3]);
             this.dc.lineTo(this.triCoords[4], this.triCoords[5]);
@@ -172,17 +173,22 @@ http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
 
             //draw SV indicator
 
-            // this.dc.strokeStyle = 'green';
-            // rad = (this.hue*2*Math.PI)/360;
-            // this.dc.moveTo(this.center+this.internalrad*Math.cos(rad), this.center-this.internalrad*Math.sin(rad));
-            // var rad2 = (((this.hue+120)%360)*2*Math.PI)/360;
-            // this.dc.lineTo(this.center+this.internalrad*Math.cos(rad2), this.center-this.internalrad*Math.sin(rad2));
-            // var rad2 = (((this.hue+240)%360)*2*Math.PI)/360;
-            // this.dc.lineTo(this.center+this.internalrad*Math.cos(rad2), this.center-this.internalrad*Math.sin(rad2));
-            // this.dc.lineTo(this.center+this.internalrad*Math.cos(rad), this.center-this.internalrad*Math.sin(rad));
-            // this.dc.stroke();
+            this.dc.strokeStyle = 'green';
+            // var ht = this.internalrad*3/2;
+            // var hh = ht*this.val/100;
+            // var v = 2*(2*hh/3);
 
 
+            var a = 3*this.internalrad/1.73205;
+            var v = a*this.val/100.0;
+
+
+            this.dc.beginPath();
+            rad = ((this.hue-90)*2*Math.PI)/360;
+            this.dc.moveTo(this.triCoords[2]+v*Math.cos(rad), this.triCoords[3]-v*Math.sin(rad));
+            rad = ((this.hue-90+60)*2*Math.PI)/360;
+            this.dc.lineTo(this.triCoords[2]+v*Math.cos(rad), this.triCoords[3]-v*Math.sin(rad));
+            this.dc.stroke();
         }
     }
 
