@@ -35,6 +35,9 @@ http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
         return false;
     }
 
+
+
+
     ns.HSVTriangle = function(ops){
         this.ops = $.extend({border:.20}, ops);
         // console.debug(ops);
@@ -43,30 +46,24 @@ http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
         this.center = this.ops.canvas.width/2;  //TODO make sure canvas is square
         this.externalrad = this.center;
         this.internalrad = this.externalrad*(1-this.ops.border);
-
-        var that = this;
-
         this.triCoords = Array();
-
         this.hue = 0;
         this.sat = 50;
         this.val = 50;
-
         this.onRing = false;
         this.onTriangle = false;
+
+        this.draw();
+
+        var that = this;
 
         this.ops.canvas.addEventListener('mousedown',  function(ev){
             // console.log('x:'+ev.offsetX+' y:'+ev.offsetY);
             var dx = ev.offsetX-that.center;
             var dy = ev.offsetY-that.center;
-            // console.log('x:'+dx+' y:'+dy)
             var d = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
-            var a = ((Math.atan2(-dy, dx)*180/Math.PI)+720)%360;
-            // console.log(d);
-            // console.log(a);
             if(d >= that.internalrad && d <= that.externalrad){
-                // console.log('dentro');
-                that.hue = a;
+                that.hue = ((Math.atan2(-dy, dx)*180/Math.PI)+720)%360;
                 that.onRing = true;
                 that.draw();
             }
@@ -103,8 +100,6 @@ http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
             that.onRing = false;
             that.onTriangle = false;
         }, false);
-
-        this.draw();
     }
 
     ns.HSVTriangle.prototype = {
@@ -200,10 +195,209 @@ http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
 
 (function(ns, $, undefined){
 
+    function rgb2hsv(r, g, b){
+        var h, s, v,
+            rr = r/255.0,
+            gg = g/255.0,
+            bb = b/255.0,
+            cmax = Math.max(rr, gg, bb),
+            cmin = Math.min(rr, gg, bb),
+            delta = cmax-cmin;
+
+        if(delta == 0){
+            return [0, 0, Math.round(cmax*100)];
+        }
+
+        switch(cmax){
+            case rr:
+                h = 60*(((gg-bb)/delta)%6);
+                break;
+            case gg:
+                h = 60*((bb-rr)/delta+2);
+                break;
+            case bb:
+                h = 60*((rr-gg)/delta+4);
+                break;
+        }
+
+        s = delta/cmax;
+        v = cmax;
+
+        return [Math.round(h), Math.round(s*100), Math.round(v*100)];
+    }
+
+    function rgb2hsl(r, g, b){
+        var h, s, l,
+            rr = r/255.0,
+            gg = g/255.0,
+            bb = b/255.0,
+            cmax = Math.max(rr, gg, bb),
+            cmin = Math.min(rr, gg, bb),
+            delta = cmax-cmin;
+
+        if(delta == 0){
+            return [0, 0, Math.round((cmax+cmin)*50)];
+        }
+
+        switch(cmax){
+            case rr:
+                h = 60*(((gg-bb)/delta)%6);
+                break;
+            case gg:
+                h = 60*((bb-rr)/delta+2);
+                break;
+            case bb:
+                h = 60*((rr-gg)/delta+4);
+                break;
+        }
+
+        l = (cmax+cmin)/2;
+        s = delta/(1-Math.abs(2*l-1));
+
+        return [Math.round(h), Math.round(s*100), Math.round(l*100)];
+    }
+
+    function rgb2hsi(r, g, b){}
+
+    function rgb2cmyk(r, g, b){
+        var c, m, y, k,
+            rr = r/255.0,
+            gg = g/255.0,
+            bb = b/255.0;
+
+        k = 1-Math.max(rr, gg, bb);
+        c = (1-rr-k)/(1-k);
+        m = (1-gg-k)/(1-k);
+        y = (1-bb-k)/(1-k);
+
+        return [+c.toFixed(3), +m.toFixed(3), +y.toFixed(3), +k.toFixed(3)];
+    }
+
+    function hsv2rgb(h, s, v){
+        var r, g, b,
+            ss = s/100.0,
+            vv = v/100.0,
+            c = ss*vv,
+            x = c*(1-Math.abs((h/60.0)%2-1)),
+            m = vv-c;
+
+        if(h < 60){
+            r = c; g = x, b = 0;
+        }
+        else if(h < 120){
+            r = x; g = c, b = 0;
+        }
+        else if(h < 180){
+            r = 0; g = c, b = x;
+        }
+        else if(h < 240){
+            r = 0; g = x, b = c;
+        }
+        else if(h < 300){
+            r = x; g = 0, b = c;
+        }
+        else{
+            r = c; g = 0, b = x;
+        }
+
+        return [Math.round((r+m)*255), Math.round((g+m)*255), Math.round((b+m)*255)];
+    }
+
+    function hsl2rgb(h, s, l){
+        var r, g, b,
+            ss = s/100.0,
+            ll = l/100.0,
+            c = (1-Math.abs(2*ll-1))*ss,
+            x = c*(1-Math.abs((h/60.0)%2-1)),
+            m = ll-c/2.0;
+
+        if(h < 60){
+            r = c; g = x, b = 0;
+        }
+        else if(h < 120){
+            r = x; g = c, b = 0;
+        }
+        else if(h < 180){
+            r = 0; g = c, b = x;
+        }
+        else if(h < 240){
+            r = 0; g = x, b = c;
+        }
+        else if(h < 300){
+            r = x; g = 0, b = c;
+        }
+        else{
+            r = c; g = 0, b = x;
+        }
+
+        return [Math.round((r+m)*255), Math.round((g+m)*255), Math.round((b+m)*255)];
+    }
+
+    function hsi2rgb(h, s, i){}
+
+    function cmyk2rgb(c, m, y, k){
+        var r, g, b;
+
+        r = (1-c)*(1-k);
+        g = (1-m)*(1-k);
+        b = (1-y)*(1-k);
+
+        return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
+    }
+
     $(function(){
         var tri = new ns.HSVTriangle({canvas:$('#c_triangle').get(0)});
         var bla = new ns.HSVTriangle({canvas:$('#c_triangle2').get(0)});
         var asda = new ns.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5});
+
+
+        $("#2hsv").click(function(){
+            var r = rgb2hsv(parseInt($('#ina').val()), parseInt($('#inb').val()), parseInt($('#inc').val()));
+            var o = r[0]+'-'+r[1]+'-'+r[2]
+            $("#mout").html(o);
+        });
+
+        $("#2hsl").click(function(){
+            var r = rgb2hsl(parseInt($('#ina').val()), parseInt($('#inb').val()), parseInt($('#inc').val()));
+            var o = r[0]+'-'+r[1]+'-'+r[2]
+            $("#mout").html(o);
+        });
+
+        $("#2hsi").click(function(){
+
+        });
+
+        $("#2cmyk").click(function(){
+            var r = rgb2cmyk(parseInt($('#ina').val()), parseInt($('#inb').val()), parseInt($('#inc').val()));
+            var o = r[0]+'-'+r[1]+'-'+r[2]+'-'+r[3]
+            $("#mout").html(o);
+        });
+
+        $("#hsv2").click(function(){
+            var r = hsv2rgb(parseInt($('#ina').val()), parseInt($('#inb').val()), parseInt($('#inc').val()));
+            var o = r[0]+'-'+r[1]+'-'+r[2]
+            $("#mout").html(o);
+        });
+
+        $("#hsl2").click(function(){
+            var r = hsl2rgb(parseInt($('#ina').val()), parseInt($('#inb').val()), parseInt($('#inc').val()));
+            var o = r[0]+'-'+r[1]+'-'+r[2]
+            $("#mout").html(o);
+        });
+
+        $("#hsi2").click(function(){
+
+        });
+
+        $("#cmyk2").click(function(){
+            var r = cmyk2rgb(parseFloat($('#ina').val()), parseFloat($('#inb').val()), parseFloat($('#inc').val()), parseFloat($('#ind').val()));
+            var o = r[0]+'-'+r[1]+'-'+r[2]
+            $("#mout").html(o);
+        });
+
+
+
+
     });
 
 }( window.xcor = window.xcor || {}, jQuery ));
