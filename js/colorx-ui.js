@@ -29,20 +29,26 @@
     }
 
 
-
-
+ //  _    _  _______      _________   _                   _
+ // | |  | |/ ____\ \    / /__   __| (_)                 | |
+ // | |__| | (___  \ \  / /   | |_ __ _  __ _ _ __   __ _| | ___
+ // |  __  |\___ \  \ \/ /    | | '__| |/ _` | '_ \ / _` | |/ _ \
+ // | |  | |____) |  \  /     | | |  | | (_| | | | | (_| | |  __/
+ // |_|  |_|_____/    \/      |_|_|  |_|\__,_|_| |_|\__, |_|\___|
+ //                                                  __/ |
+ //                                                 |___/
     ns.HSVTriangle = function(ops){
-        this.ops = $.extend({border:.20}, ops);
+        this.ops = $.extend({border:.20, margin:0}, ops);
         // console.debug(ops);
         this.dc = this.ops.canvas.getContext('2d');
         this.callback = undefined;
         this.center = this.ops.canvas.width/2;  //TODO make sure canvas is square
-        this.externalrad = this.center;
+        this.externalrad = this.center-this.ops.margin;
         this.internalrad = this.externalrad*(1-this.ops.border);
         this.triCoords = Array();
-        this.hue = 45;
-        this.sat = 50;
-        this.val = 50;
+        this.hue = 0;
+        this.sat = 60;
+        this.val = 40;
         this.onRing = false;
         this.onTriangle = false;
 
@@ -98,39 +104,57 @@
     ns.HSVTriangle.prototype = {
         contructor: ns.HSVTriangle,
         setRGB: function(r, g, b){
-
+            var tmp = colorx.rgb2hsv([r, g, b]);
+            this.hue = tmp[0];
+            this.sat = tmp[1];
+            this.val = tmp[2];
+            this.draw();
         },
         setHSL: function(h, s, l){
-
+            var tmp = colorx.rgb2hsv(colorx.hsl2rgb([h, s, l]));
+            this.hue = tmp[0];
+            this.sat = tmp[1];
+            this.val = tmp[2];
+            this.draw();
         },
         setHSV: function(h, s, v){
-
+            this.hue = h;
+            this.sat = s;
+            this.val = v;
+            this.draw();
         },
-        setHSI: function(h, s, i){
-
+        getRGB: function(){
+            var tmp = colorx.hsv2rgb([this.hue, this.sat, this.val]);
+            return tmp;
+        },
+        getHSL: function(){
+            var tmp = colorx.rgb2hsl(colorx.hsv2rgb([this.hue, this.sat, this.val]));
+            return tmp;
+        },
+        getHSV: function(){
+            return [this.hue, this.sat, this.val];
         },
         setCallback: function(cb){
             this.callback = cb;
-        },
-        getColor: function(){
-
-            var c = {r:0, g:0, b:0};
-
-            return c;
+            if(this.callback){
+                this.callback(this.getRGB);
+            }
         },
         draw: function(){
-            var rad;
+            var rad, cos, sin;
 
             //clean canvas
             this.dc.clearRect(0, 0, this.ops.canvas.width, this.ops.canvas.height);
 
             //draw hue ring
             for(var i = 0; i < 360; i += .2){
-                rad = (i*2*Math.PI)/360;
+                rad = (i*Math.PI)/180;
+                cos = Math.cos(rad);
+                sin = Math.sin(rad);
                 this.dc.strokeStyle = "hsl("+i+", 100%, 50%)";
                 this.dc.beginPath();
-                this.dc.moveTo(this.center+this.internalrad*Math.cos(rad), this.center-this.internalrad*Math.sin(rad));
-                this.dc.lineTo(this.center+this.externalrad*Math.cos(rad), this.center-this.externalrad*Math.sin(rad));
+                this.dc.moveTo(this.center+this.internalrad*cos, this.center-this.internalrad*sin);
+                this.dc.lineTo(this.center+this.externalrad*cos, this.center-this.externalrad*sin);
                 this.dc.stroke();
             }
 
@@ -138,23 +162,25 @@
             this.dc.strokeStyle = "black";
             this.dc.lineWidth = 2;
             this.dc.beginPath();
-            rad = (this.hue*2*Math.PI)/360;
-            this.dc.moveTo(this.center+this.internalrad*Math.cos(rad), this.center-this.internalrad*Math.sin(rad));
-            this.dc.lineTo(this.center+this.externalrad*Math.cos(rad), this.center-this.externalrad*Math.sin(rad));
+            rad = (this.hue*Math.PI)/180;
+            cos = Math.cos(rad);
+            sin = Math.sin(rad);
+            this.dc.moveTo(this.center+this.internalrad*cos, this.center-this.internalrad*sin);
+            this.dc.lineTo(this.center+this.externalrad*cos, this.center-this.externalrad*sin);
             this.dc.stroke();
 
             //calculate internal triangle coords
-            rad = (this.hue*2*Math.PI)/360;
+            rad = (this.hue*Math.PI)/180;
             this.triCoords[0] = this.center+this.internalrad*Math.cos(rad);  //X of hue point
             this.triCoords[1] = this.center-this.internalrad*Math.sin(rad);  //Y
-            rad = (((this.hue+120)%360)*2*Math.PI)/360;
+            rad = (((this.hue+120)%360)*Math.PI)/180;
             this.triCoords[2] = this.center+this.internalrad*Math.cos(rad); //X of black edge
             this.triCoords[3] = this.center-this.internalrad*Math.sin(rad); //Y
-            rad = (((this.hue+240)%360)*2*Math.PI)/360;
+            rad = (((this.hue+240)%360)*Math.PI)/180;
             this.triCoords[4] = this.center+this.internalrad*Math.cos(rad); //X of white edge
             this.triCoords[5] = this.center-this.internalrad*Math.sin(rad); //Y
 
-            //draw triangle
+            //draw triangle border
             // this.dc.lineWidth = 1;
             // this.dc.beginPath();
             // this.dc.moveTo(this.triCoords[0], this.triCoords[1]);
@@ -163,45 +189,40 @@
             // this.dc.lineTo(this.triCoords[0], this.triCoords[1]);
             // this.dc.stroke();
 
-            //TODO fill in with gradient color from hue
-            var a = 3*this.internalrad/1.73205;
+            //draw triangle filled with gradient color
+            var a = 3*this.internalrad/1.73205;  //a is triangle side length
 
-            rad = ((this.hue-90)*2*Math.PI)/360;
-            var rad2 = ((this.hue-90+60)*2*Math.PI)/360;
+            rad = ((this.hue-90)*Math.PI)/180;
+            cos = Math.cos(rad);
+            sin = Math.sin(rad);
 
-            for(var v = .1; v < a; v+=.2){
-                var p1x = this.triCoords[2]+v*Math.cos(rad);
-                var p1y = this.triCoords[3]-v*Math.sin(rad);
-                var p2x = this.triCoords[2]+v*Math.cos(rad2);
-                var p2y = this.triCoords[3]-v*Math.sin(rad2);
+            rad = ((this.hue-90+60)*Math.PI)/180;
+            var cos2 = Math.cos(rad);
+            var sin2 = Math.sin(rad);
 
-                var g = this.dc.createLinearGradient(p1x, p1y, p2x, p2y);
-                var vv = v/a;
+            var p1x, p1y, p2x, p2y, vv, grd;
 
+            this.dc.lineWidth = 1;
+            for(var v = 0; v < a; v += .2){
+                p1x = this.triCoords[2]+v*cos;
+                p1y = this.triCoords[3]-v*sin;
+                p2x = this.triCoords[2]+v*cos2;
+                p2y = this.triCoords[3]-v*sin2;
 
-                // var ll1 = (2-s)*vv;
-                // var ss1 = s*vv;
-                // ss1 /= (ll1 <= 1)? ll1: 2-ll1;
-                // ll1 /= 2;
-                /////Simplificado para s=0
-                var ll1 = vv;
-                var ss1 = 0;
+                grd = this.dc.createLinearGradient(p1x, p1y, p2x, p2y);
 
-                g.addColorStop(0, "hsl("+this.hue+","+Math.round(ss1*100)+"%,"+Math.round(ll1*100)+"%)");
+                vv = v/a;  //vv = hsv value ranging 0 to 1
 
-                // var ll2 = (2-s)*vv;
-                // var ss2 = s*vv;
-                // ss2 /= (ll2 <= 1)? ll2: 2-ll2;
-                // ll2 /= 2;
-                /////simplificado para s=1
-                var ll2 = vv/2;
-                var ss2 = 1;
+                //here we have to convert hsv to CSS hsl
+                //vv is value ranging 0 to 1
+                //hsl should gradient saturation from 0 to 100%
+                //using this calulation: http://codeitdown.com/hsl-hsb-hsv-color
+                //we can simplify:
+                //HSV(h, 0, v) -> HSV(h, 100, v)  ===  HSL(h, 0, v) -> HSL(h, 100, v/2)
 
-                // var t = "hsl("+this.hue+","+Math.round(ss1*100)+"%,"+Math.round(ll1*100)+"%)";
-                // t += "hsl("+this.hue+","+Math.round(ss2*100)+"%,"+Math.round(ll2*100)+"%)";
-                // console.log(t);
-                g.addColorStop(1, "hsl("+this.hue+","+Math.round(ss2*100)+"%,"+Math.round(ll2*100)+"%)");
-                this.dc.strokeStyle = g;
+                grd.addColorStop(0, "hsl("+this.hue+",0%,"+Math.round(vv*100)+"%)");
+                grd.addColorStop(1, "hsl("+this.hue+",100%,"+Math.round(vv*50)+"%)");
+                this.dc.strokeStyle = grd;
 
                 this.dc.beginPath();
                 this.dc.moveTo(p1x, p1y);
@@ -210,6 +231,26 @@
             }
 
             //draw SV indicator
+            vv = a*this.val/100;
+            p1x = this.triCoords[2]+vv*cos;
+            p1y = this.triCoords[3]-vv*sin;
+            p2x = this.triCoords[2]+vv*cos2;
+            p2y = this.triCoords[3]-vv*sin2;
+
+            var d = Math.sqrt((p1x-p2x)*(p1x-p2x)+(p1y-p2y)*(p1y-p2y))*this.sat/100;
+
+            rad = ((this.hue+30)*Math.PI)/180;
+            p2x = p1x+d*Math.cos(rad);
+            p2y = p1y-d*Math.sin(rad);
+
+            this.dc.strokeStyle = 'black';
+            this.dc.beginPath();
+            this.dc.arc(p2x, p2y, 4, 0, 2*Math.PI);
+            this.dc.stroke();
+            this.dc.strokeStyle = 'white';
+            this.dc.beginPath();
+            this.dc.arc(p2x, p2y, 3, 0, 2*Math.PI);
+            this.dc.stroke();
         }
     }
 
