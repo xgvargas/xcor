@@ -41,7 +41,7 @@
  //                                                  __/ |
  //                                                 |___/
     ns.HSVTriangle = function(ops){
-        this.ops = $.extend({border:.20, margin:0}, ops);
+        this.ops = $.extend({border:.20, margin:0, hue:0, sat:100, val:100}, ops);
         // console.debug(ops);
         this.dc = this.ops.canvas.getContext('2d');
         this.callback = undefined;
@@ -49,9 +49,9 @@
         this.externalrad = this.center-this.ops.margin;
         this.internalrad = this.externalrad*(1-this.ops.border);
         this.triCoords = Array();
-        this.hue = 0;
-        this.sat = 60;
-        this.val = 40;
+        this.hue = this.ops.hue;
+        this.sat = this.ops.sat;
+        this.val = this.ops.val;
         this.onRing = false;
         this.onTriangle = false;
 
@@ -108,6 +108,8 @@
                     that.callback(that);
                 }
             }
+
+            ev.preventDefault();
 
         }, false);
 
@@ -325,13 +327,52 @@
         this.min = this.ops.min;
         this.position = this.ops.pos;
         this.dc = this.ops.canvas.getContext('2d');
+        this.moving = false;
+        this.draw();
+
+        var that = this;
+
+        this.ops.canvas.addEventListener('mousedown',  function(ev){
+            // console.log('x:'+ev.offsetX+' y:'+ev.offsetY);
+            that.moving = true;
+            ev.preventDefault();
+        }, false);
+
+        this.ops.canvas.addEventListener('mousemove', function(ev){
+            if(that.moving){
+            }
+        }, false);
+
+        this.ops.canvas.addEventListener('mouseup', function(ev){
+            that.moving = false;
+        }, false);
+
+        this.ops.canvas.addEventListener('mouseout', function(ev){
+            that.moving = false;
+        }, false);
     }
 
     ns.Slider.prototype = {
         constructor: ns.Slider,
-        set: function(d){},
+        set: function(d){
+            if(d.max !== undefined) this.max = d.max;
+            if(d.min !== undefined) this.min = d.min;
+            if(d.pos !== undefined) this.position = d.pos;
+            if(this.callback){
+                this.callback(this);
+            }
+        },
         getPos: function(){
             return this.position;
+        },
+        setCallback: function(cb){
+            this.callback = cb;
+            if(this.callback){
+                this.callback(this);
+            }
+        },
+        getGrd: function(){
+            return 'black';
         },
         draw: function(){
 
@@ -344,8 +385,94 @@
 
             //draw text
             //draw cursor
+            var w = this.ops.canvas.width;
+
+            var p = this.max-this.min;
+            var pp = w/p;
+            var ppp = pp*this.position;
+            this.dc.beginPath();
+            this.dc.strokeStyle = this.getGrd();
+            this.dc.lineWidth = 2;
+            this.dc.moveTo(ppp, 0);
+            this.dc.lineTo(ppp, this.ops.canvas.height);
+            this.dc.stroke();
         }
     }
+
+
+
+ //   _____ _ _     _           _____  ______ _____
+ //  / ____| (_)   | |         |  __ \|  ____|  __ \
+ // | (___ | |_  __| | ___ _ __| |__) | |__  | |  | |
+ //  \___ \| | |/ _` |/ _ \ '__|  _  /|  __| | |  | |
+ //  ____) | | | (_| |  __/ |  | | \ \| |____| |__| |
+ // |_____/|_|_|\__,_|\___|_|  |_|  \_\______|_____/
+
+    ns.SliderRed = function(ops){
+        ns.Slider.call(this, ops);
+    }
+    // inheritPrototype(ns.SliderRed, ns.Slider);
+    ns.SliderRed.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderRed.prototype.constructor = ns.SliderRed;
+
+    ns.SliderRed.prototype.getGrd = function(){
+        return 'blue';
+    }
+
+ //   _____ _ _     _            _____ _____  ______ ______ _   _
+ //  / ____| (_)   | |          / ____|  __ \|  ____|  ____| \ | |
+ // | (___ | |_  __| | ___ _ __| |  __| |__) | |__  | |__  |  \| |
+ //  \___ \| | |/ _` |/ _ \ '__| | |_ |  _  /|  __| |  __| | . ` |
+ //  ____) | | | (_| |  __/ |  | |__| | | \ \| |____| |____| |\  |
+ // |_____/|_|_|\__,_|\___|_|   \_____|_|  \_\______|______|_| \_|
+
+
+ //   _____ _ _     _           ____  _     _    _ ______
+ //  / ____| (_)   | |         |  _ \| |   | |  | |  ____|
+ // | (___ | |_  __| | ___ _ __| |_) | |   | |  | | |__
+ //  \___ \| | |/ _` |/ _ \ '__|  _ <| |   | |  | |  __|
+ //  ____) | | | (_| |  __/ |  | |_) | |___| |__| | |____
+ // |_____/|_|_|\__,_|\___|_|  |____/|______\____/|______|
+
+
+ //   _____ _ _     _           _    _ _    _ ______
+ //  / ____| (_)   | |         | |  | | |  | |  ____|
+ // | (___ | |_  __| | ___ _ __| |__| | |  | | |__
+ //  \___ \| | |/ _` |/ _ \ '__|  __  | |  | |  __|
+ //  ____) | | | (_| |  __/ |  | |  | | |__| | |____
+ // |_____/|_|_|\__,_|\___|_|  |_|  |_|\____/|______|
+
+
+ //   _____ _ _     _           _    _  _______      __     _____      _______
+ //  / ____| (_)   | |         | |  | |/ ____\ \    / /    / ____|  /\|__   __|
+ // | (___ | |_  __| | ___ _ __| |__| | (___  \ \  / /____| (___   /  \  | |
+ //  \___ \| | |/ _` |/ _ \ '__|  __  |\___ \  \ \/ /______\___ \ / /\ \ | |
+ //  ____) | | | (_| |  __/ |  | |  | |____) |  \  /       ____) / ____ \| |
+ // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/    \/       |_____/_/    \_\_|
+
+
+ //   _____ _ _     _           _    _  _______      __  __      __     _
+ //  / ____| (_)   | |         | |  | |/ ____\ \    / /  \ \    / /\   | |
+ // | (___ | |_  __| | ___ _ __| |__| | (___  \ \  / /____\ \  / /  \  | |
+ //  \___ \| | |/ _` |/ _ \ '__|  __  |\___ \  \ \/ /______\ \/ / /\ \ | |
+ //  ____) | | | (_| |  __/ |  | |  | |____) |  \  /        \  / ____ \| |____
+ // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/    \/          \/_/    \_\______|
+
+
+ //   _____ _ _     _           _    _  _____ _          _____      _______
+ //  / ____| (_)   | |         | |  | |/ ____| |        / ____|  /\|__   __|
+ // | (___ | |_  __| | ___ _ __| |__| | (___ | |  _____| (___   /  \  | |
+ //  \___ \| | |/ _` |/ _ \ '__|  __  |\___ \| | |______\___ \ / /\ \ | |
+ //  ____) | | | (_| |  __/ |  | |  | |____) | |____    ____) / ____ \| |
+ // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/|______|  |_____/_/    \_\_|
+
+
+ //   _____ _ _     _           _    _  _____ _          _      _____ _______
+ //  / ____| (_)   | |         | |  | |/ ____| |        | |    |_   _|__   __|
+ // | (___ | |_  __| | ___ _ __| |__| | (___ | |  ______| |      | |    | |
+ //  \___ \| | |/ _` |/ _ \ '__|  __  |\___ \| | |______| |      | |    | |
+ //  ____) | | | (_| |  __/ |  | |  | |____) | |____    | |____ _| |_   | |
+ // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/|______|   |______|_____|  |_|
 
 
 

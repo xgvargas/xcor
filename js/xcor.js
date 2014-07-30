@@ -3,13 +3,17 @@
 
     $(function(){
         var tri = new colorx.HSVTriangle({canvas:$('#c_triangle').get(0), margin:10});
-        var bla = new colorx.HSVTriangle({canvas:$('#c_triangle2').get(0)});
-        var asda = new colorx.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5});
+        var bla = new colorx.HSVTriangle({canvas:$('#c_triangle2').get(0), hue:133, val:60, sat:75});
+        var asda = new colorx.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5, hue:75});
 
         tri.setCallback(function(o){
             var rgb = o.getRGB();
             $('#teste').css({'background-color':'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'});
         });
+
+
+        var blu = new colorx.Slider({canvas:$('#c_slider').get(0)});
+        var blu = new colorx.SliderRed({canvas:$('#c_slider2').get(0), pos:30});
 
 
         $("#2hsv").click(function(){
