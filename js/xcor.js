@@ -6,14 +6,26 @@
         var bla = new colorx.HSVTriangle({canvas:$('#c_triangle2').get(0), hue:133, val:60, sat:75});
         var asda = new colorx.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5, hue:75});
 
+        var blu = new colorx.Slider({canvas:$('#c_slider').get(0)});
+        var rgb_R = new colorx.SliderRed({canvas:$('#c_slider_red').get(0), pos:30});
+        var rgb_G = new colorx.SliderGreen({canvas:$('#c_slider_green').get(0), pos:30});
+        var rgb_B = new colorx.SliderBlue({canvas:$('#c_slider_blue').get(0), pos:30});
+
+
+        rgb_R.setCallback(function(o){
+            tri.setRGB(o.getRGB());
+        });
+
         tri.setCallback(function(o){
             var rgb = o.getRGB();
             $('#teste').css({'background-color':'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'});
+
+            rgb_R.setRGB([rgb[0], rgb[1], rgb[2]]);
+            rgb_G.setRGB([rgb[0], rgb[1], rgb[2]]);
+            rgb_B.setRGB([rgb[0], rgb[1], rgb[2]]);
         });
 
 
-        var blu = new colorx.Slider({canvas:$('#c_slider').get(0)});
-        var blu = new colorx.SliderRed({canvas:$('#c_slider2').get(0), pos:30});
 
 
         $("#2hsv").click(function(){

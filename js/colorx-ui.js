@@ -335,11 +335,22 @@
         this.ops.canvas.addEventListener('mousedown',  function(ev){
             // console.log('x:'+ev.offsetX+' y:'+ev.offsetY);
             that.moving = true;
+            //TODO
+
+            that.draw();
             ev.preventDefault();
+            if(that.callback){
+                that.callback(that);
+            }
         }, false);
 
         this.ops.canvas.addEventListener('mousemove', function(ev){
             if(that.moving){
+                //TODO
+                that.draw();
+                if(that.callback){
+                    that.callback(that);
+                }
             }
         }, false);
 
@@ -349,6 +360,18 @@
 
         this.ops.canvas.addEventListener('mouseout', function(ev){
             that.moving = false;
+        }, false);
+
+        this.ops.canvas.addEventListener('mousewheel', function(ev){
+            // console.log(ev);
+            that.position += Math.max(-1, Math.min(1, ev.wheelDeltaY));
+            that.position += Math.max(-1, Math.min(1, -ev.wheelDeltaX))*25;
+            that.position = Math.max(that.min, Math.min(that.max, that.position));
+            ev.preventDefault();
+            if(that.callback){
+                that.callback(that);
+            }
+            that.draw();
         }, false);
     }
 
@@ -361,6 +384,7 @@
             if(this.callback){
                 this.callback(this);
             }
+            draw();
         },
         getPos: function(){
             return this.position;
@@ -368,11 +392,11 @@
         setCallback: function(cb){
             this.callback = cb;
             if(this.callback){
-                this.callback(this);
+                // this.callback(this);
             }
         },
-        getGrd: function(){
-            return 'black';
+        getFill: function(){
+            return 'white';
         },
         draw: function(){
 
@@ -382,6 +406,9 @@
             //draw left button
             //draw right button
             //draw border
+            //fill background
+            this.dc.fillStyle = this.getFill();
+            this.dc.fillRect(0, 0, this.ops.canvas.width, this.ops.canvas.height);
 
             //draw text
             //draw cursor
@@ -391,8 +418,14 @@
             var pp = w/p;
             var ppp = pp*this.position;
             this.dc.beginPath();
-            this.dc.strokeStyle = this.getGrd();
-            this.dc.lineWidth = 2;
+            this.dc.strokeStyle = 'white';
+            this.dc.lineWidth = 3;
+            this.dc.moveTo(ppp, 0);
+            this.dc.lineTo(ppp, this.ops.canvas.height);
+            this.dc.stroke();
+            this.dc.beginPath();
+            this.dc.strokeStyle = 'black';
+            this.dc.lineWidth = 1;
             this.dc.moveTo(ppp, 0);
             this.dc.lineTo(ppp, this.ops.canvas.height);
             this.dc.stroke();
@@ -409,15 +442,32 @@
  // |_____/|_|_|\__,_|\___|_|  |_|  \_\______|_____/
 
     ns.SliderRed = function(ops){
-        ns.Slider.call(this, ops);
+        this.position = ops.r || 0;
+        this.G = ops.g || 0;
+        this.B = ops.b || 0;
+        ns.Slider.call(this, $.extend({r:0, g:0, b:0, max:255}, ops));
     }
-    // inheritPrototype(ns.SliderRed, ns.Slider);
     ns.SliderRed.prototype = Object.create(ns.Slider.prototype);
     ns.SliderRed.prototype.constructor = ns.SliderRed;
 
-    ns.SliderRed.prototype.getGrd = function(){
-        return 'blue';
+    ns.SliderRed.prototype.getFill = function(){
+        var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        grd.addColorStop(0, "rgb(0,"+this.G+","+this.B+")");
+        grd.addColorStop(1, "rgb(255,"+this.G+","+this.B+")");
+        return grd;
     }
+
+    ns.SliderRed.prototype.setRGB = function(rgb){
+        this.position = rgb[0];
+        this.G = rgb[1];
+        this.B = rgb[2];
+        this.draw();
+    }
+
+    ns.SliderRed.prototype.getRGB = function(){
+        return [this.position, this.G, this.B];
+    }
+
 
  //   _____ _ _     _            _____ _____  ______ ______ _   _
  //  / ____| (_)   | |          / ____|  __ \|  ____|  ____| \ | |
@@ -426,6 +476,33 @@
  //  ____) | | | (_| |  __/ |  | |__| | | \ \| |____| |____| |\  |
  // |_____/|_|_|\__,_|\___|_|   \_____|_|  \_\______|______|_| \_|
 
+    ns.SliderGreen = function(ops){
+        this.R = ops.r || 0;
+        this.position = ops.g || 0;
+        this.B = ops.b || 0;
+        ns.Slider.call(this, $.extend({r:0, g:0, b:0, max:255}, ops));
+    }
+    ns.SliderGreen.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderGreen.prototype.constructor = ns.SliderGreen;
+
+    ns.SliderGreen.prototype.getFill = function(){
+        var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        grd.addColorStop(0, "rgb("+this.R+",0,"+this.B+")");
+        grd.addColorStop(1, "rgb("+this.R+",255,"+this.B+")");
+        return grd;
+    }
+
+    ns.SliderGreen.prototype.setRGB = function(rgb){
+        this.R = rgb[0];
+        this.position = rgb[1];
+        this.B = rgb[2];
+        this.draw();
+    }
+
+    ns.SliderGreen.prototype.getRGB = function(){
+        return [this.position, this.G, this.B];
+    }
+
 
  //   _____ _ _     _           ____  _     _    _ ______
  //  / ____| (_)   | |         |  _ \| |   | |  | |  ____|
@@ -433,6 +510,34 @@
  //  \___ \| | |/ _` |/ _ \ '__|  _ <| |   | |  | |  __|
  //  ____) | | | (_| |  __/ |  | |_) | |___| |__| | |____
  // |_____/|_|_|\__,_|\___|_|  |____/|______\____/|______|
+
+    ns.SliderBlue = function(ops){
+        this.R = ops.r || 0;
+        this.G = ops.g || 0;
+        this.position = ops.b || 0;
+        ns.Slider.call(this, $.extend({r:0, g:0, b:0, max:255}, ops));
+    }
+    ns.SliderBlue.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderBlue.prototype.constructor = ns.SliderBlue;
+
+    ns.SliderBlue.prototype.getFill = function(){
+        var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        grd.addColorStop(0, "rgb("+this.R+","+this.G+",0)");
+        grd.addColorStop(1, "rgb("+this.R+","+this.G+",255)");
+        return grd;
+    }
+
+    ns.SliderBlue.prototype.setRGB = function(rgb){
+        this.R = rgb[0];
+        this.G = rgb[1];
+        this.position = rgb[2];
+        this.draw();
+    }
+
+    ns.SliderBlue.prototype.getRGB = function(){
+        return [this.position, this.G, this.B];
+    }
+
 
 
  //   _____ _ _     _           _    _ _    _ ______
