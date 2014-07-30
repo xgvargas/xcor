@@ -1,19 +1,13 @@
 (function(ns, $, undefined){
 
-    // function Output(mdiv, nome){
-    //   this.mdiv = mdiv;
-    //   $('spam', this.mdiv).html(nome);
+    // ns.bla = function(ops){
+    //     this.ops = $.extend({}, ops);
     // }
 
-    // Output.prototype = {
-    //   constructor: Output,
-
-    //   mudar: function(novo){
-    //     $('spam', this.mdiv).html(novo);
-    //   },
-    //   diferente:  function(novo){
-    //     $('spam', this.mdiv).html(novo);
-    //   }
+    // ns.bla.prototype = {
+    //     constructor: ns.bla,
+    //     set: function(d){},
+    //     getPos: function(){}
     // }
 
     function isInsideTriangle(x1, y1, x2, y2, x3, y3, x, y){
@@ -81,8 +75,7 @@
             angle = angleBetween(that.triCoords[2], that.triCoords[3],
                                  x, y,
                                  that.triCoords[4], that.triCoords[5]);
-            console.log(angle);
-            var sss = Math.max(0, angle)/(Math.PI/3);
+            var sss = angle/(Math.PI/3);
 
             that.sat = Math.min(100, Math.max(0, Math.round(sss*100)));
         }
@@ -97,7 +90,7 @@
                 that.onRing = true;
                 that.draw();
                 if(that.callback){
-                    that.callback(that.getRGB());
+                    that.callback(that);
                 }
             }
 
@@ -112,7 +105,7 @@
 
                 that.draw();
                 if(that.callback){
-                    that.callback(that.getRGB());
+                    that.callback(that);
                 }
             }
 
@@ -126,21 +119,31 @@
                 that.hue = a;
                 that.draw();
                 if(that.callback){
-                    that.callback(that.getRGB());
+                    that.callback(that);
                 }
             }
 
             if(that.onTriangle){
-                discoverSandV(ev.offsetX, ev.offsetY);
-                that.draw();
-                if(that.callback){
-                    that.callback(that.getRGB());
+                if(isInsideTriangle(that.triCoords[0], that.triCoords[1],
+                                    that.triCoords[2], that.triCoords[3],
+                                    that.triCoords[4], that.triCoords[5],
+                                    ev.offsetX, ev.offsetY)){
+                    discoverSandV(ev.offsetX, ev.offsetY);
+                    that.draw();
+                    if(that.callback){
+                        that.callback(that);
+                    }
                 }
             }
 
         }, false);
 
         this.ops.canvas.addEventListener('mouseup', function(ev){
+            that.onRing = false;
+            that.onTriangle = false;
+        }, false);
+
+        this.ops.canvas.addEventListener('mouseout', function(ev){
             that.onRing = false;
             that.onTriangle = false;
         }, false);
@@ -155,7 +158,7 @@
             this.val = tmp[2];
             this.draw();
             if(this.callback){
-                this.callback(this.getRGB);
+                this.callback(this);
             }
         },
         setHSL: function(h, s, l){
@@ -165,7 +168,7 @@
             this.val = tmp[2];
             this.draw();
             if(this.callback){
-                this.callback(this.getRGB);
+                this.callback(this);
             }
         },
         setHSV: function(h, s, v){
@@ -174,7 +177,7 @@
             this.val = v;
             this.draw();
             if(this.callback){
-                this.callback(this.getRGB);
+                this.callback(this);
             }
         },
         getRGB: function(){
@@ -191,7 +194,7 @@
         setCallback: function(cb){
             this.callback = cb;
             if(this.callback){
-                this.callback(this.getRGB);
+                this.callback(this);
             }
         },
         draw: function(){
@@ -308,4 +311,42 @@
         }
     }
 
-}( window.colorx_ui = window.colorx_ui || {}, jQuery ));
+
+ //   _____ _ _     _
+ //  / ____| (_)   | |
+ // | (___ | |_  __| | ___ _ __
+ //  \___ \| | |/ _` |/ _ \ '__|
+ //  ____) | | | (_| |  __/ |
+ // |_____/|_|_|\__,_|\___|_|
+
+    ns.Slider = function(ops){
+        this.ops = $.extend({max:100, min:0, pos:50}, ops);
+        this.max = this.ops.max;
+        this.min = this.ops.min;
+        this.position = this.ops.pos;
+        this.dc = this.ops.canvas.getContext('2d');
+    }
+
+    ns.Slider.prototype = {
+        constructor: ns.Slider,
+        set: function(d){},
+        getPos: function(){
+            return this.position;
+        },
+        draw: function(){
+
+            //clean canvas
+            this.dc.clearRect(0, 0, this.ops.canvas.width, this.ops.canvas.height);
+
+            //draw left button
+            //draw right button
+            //draw border
+
+            //draw text
+            //draw cursor
+        }
+    }
+
+
+
+}( window.colorx = window.colorx || {}, jQuery ));

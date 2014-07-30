@@ -2,11 +2,12 @@
 (function(ns, $, undefined){
 
     $(function(){
-        var tri = new colorx_ui.HSVTriangle({canvas:$('#c_triangle').get(0), margin:10});
-        var bla = new colorx_ui.HSVTriangle({canvas:$('#c_triangle2').get(0)});
-        var asda = new colorx_ui.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5});
+        var tri = new colorx.HSVTriangle({canvas:$('#c_triangle').get(0), margin:10});
+        var bla = new colorx.HSVTriangle({canvas:$('#c_triangle2').get(0)});
+        var asda = new colorx.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5});
 
-        tri.setCallback(function(rgb){
+        tri.setCallback(function(o){
+            var rgb = o.getRGB();
             $('#teste').css({'background-color':'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'});
         });
 
