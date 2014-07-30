@@ -29,6 +29,15 @@
     }
 
 
+    function angleBetween(p1x, p1y, p0x, p0y, p2x, p2y){
+        var m01 = Math.pow(p1x-p0x, 2) + Math.pow(p1y-p0y, 2),
+            m02 = Math.pow(p2x-p0x, 2) + Math.pow(p2y-p0y, 2),
+            m12 = Math.pow(p1x-p2x, 2) + Math.pow(p1y-p2y, 2);
+        return Math.acos( (m01+m12-m02) / Math.sqrt(4*m01*m12) );
+    }
+
+
+
  //  _    _  _______      _________   _                   _
  // | |  | |/ ____\ \    / /__   __| (_)                 | |
  // | |__| | (___  \ \  / /   | |_ __ _  __ _ _ __   __ _| | ___
@@ -56,6 +65,28 @@
 
         var that = this;
 
+        function discoverSandV(x, y){
+            var a = 3*that.internalrad/1.73205;  //a is triangle side length
+            var h = 3*that.internalrad/2;        //h is triangle height
+
+            var d = Math.sqrt(Math.pow(that.triCoords[0]-x, 2)+Math.pow(that.triCoords[1]-y, 2));
+
+            var angle = angleBetween(that.triCoords[0], that.triCoords[1],
+                                     x, y,
+                                     that.triCoords[4], that.triCoords[5]);
+
+            var hhh = d*Math.sin(angle);
+            that.val = Math.min(100, Math.max(0, Math.round((1-hhh/h)*100)));
+
+            angle = angleBetween(that.triCoords[2], that.triCoords[3],
+                                 x, y,
+                                 that.triCoords[4], that.triCoords[5]);
+            console.log(angle);
+            var sss = Math.max(0, angle)/(Math.PI/3);
+
+            that.sat = Math.min(100, Math.max(0, Math.round(sss*100)));
+        }
+
         this.ops.canvas.addEventListener('mousedown',  function(ev){
             // console.log('x:'+ev.offsetX+' y:'+ev.offsetY);
             var dx = ev.offsetX-that.center;
@@ -65,16 +96,24 @@
                 that.hue = ((Math.atan2(-dy, dx)*180/Math.PI)+720)%360;
                 that.onRing = true;
                 that.draw();
+                if(that.callback){
+                    that.callback(that.getRGB());
+                }
             }
 
             if(isInsideTriangle(that.triCoords[0], that.triCoords[1],
                                 that.triCoords[2], that.triCoords[3],
                                 that.triCoords[4], that.triCoords[5],
                                 ev.offsetX, ev.offsetY)){
-                console.log('dentro');
+                // console.log('dentro');
                 that.onTriangle = true;
-                //TODO
+
+                discoverSandV(ev.offsetX, ev.offsetY);
+
                 that.draw();
+                if(that.callback){
+                    that.callback(that.getRGB());
+                }
             }
 
         }, false);
@@ -86,11 +125,17 @@
                 var a = ((Math.atan2(-dy, dx)*180/Math.PI)+720)%360;
                 that.hue = a;
                 that.draw();
+                if(that.callback){
+                    that.callback(that.getRGB());
+                }
             }
 
             if(that.onTriangle){
-                //TODO
+                discoverSandV(ev.offsetX, ev.offsetY);
                 that.draw();
+                if(that.callback){
+                    that.callback(that.getRGB());
+                }
             }
 
         }, false);
@@ -109,6 +154,9 @@
             this.sat = tmp[1];
             this.val = tmp[2];
             this.draw();
+            if(this.callback){
+                this.callback(this.getRGB);
+            }
         },
         setHSL: function(h, s, l){
             var tmp = colorx.rgb2hsv(colorx.hsl2rgb([h, s, l]));
@@ -116,12 +164,18 @@
             this.sat = tmp[1];
             this.val = tmp[2];
             this.draw();
+            if(this.callback){
+                this.callback(this.getRGB);
+            }
         },
         setHSV: function(h, s, v){
             this.hue = h;
             this.sat = s;
             this.val = v;
             this.draw();
+            if(this.callback){
+                this.callback(this.getRGB);
+            }
         },
         getRGB: function(){
             var tmp = colorx.hsv2rgb([this.hue, this.sat, this.val]);

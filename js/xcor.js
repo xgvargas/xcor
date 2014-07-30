@@ -6,6 +6,10 @@
         var bla = new colorx_ui.HSVTriangle({canvas:$('#c_triangle2').get(0)});
         var asda = new colorx_ui.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5});
 
+        tri.setCallback(function(rgb){
+            $('#teste').css({'background-color':'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'});
+        });
+
 
         $("#2hsv").click(function(){
             var r = colorx.rgb2hsv([parseInt($('#ina').val()), parseInt($('#inb').val()), parseInt($('#inc').val())]);
