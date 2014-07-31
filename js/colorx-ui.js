@@ -153,8 +153,8 @@
 
     ns.HSVTriangle.prototype = {
         contructor: ns.HSVTriangle,
-        setRGB: function(r, g, b){
-            var tmp = colorx.rgb2hsv([r, g, b]);
+        setRGB: function(rgb){
+            var tmp = colorx.rgb2hsv(rgb);
             this.hue = tmp[0];
             this.sat = tmp[1];
             this.val = tmp[2];
@@ -163,8 +163,8 @@
                 this.callback(this);
             }
         },
-        setHSL: function(h, s, l){
-            var tmp = colorx.rgb2hsv(colorx.hsl2rgb([h, s, l]));
+        setHSL: function(hsl){
+            var tmp = colorx.rgb2hsv(colorx.hsl2rgb(hsl));
             this.hue = tmp[0];
             this.sat = tmp[1];
             this.val = tmp[2];
@@ -173,22 +173,20 @@
                 this.callback(this);
             }
         },
-        setHSV: function(h, s, v){
-            this.hue = h;
-            this.sat = s;
-            this.val = v;
+        setHSV: function(hsv){
+            this.hue = hsv[0];
+            this.sat = hsv[1];
+            this.val = hsv[2];
             this.draw();
             if(this.callback){
                 this.callback(this);
             }
         },
         getRGB: function(){
-            var tmp = colorx.hsv2rgb([this.hue, this.sat, this.val]);
-            return tmp;
+            return colorx.hsv2rgb([this.hue, this.sat, this.val]);
         },
         getHSL: function(){
-            var tmp = colorx.rgb2hsl(colorx.hsv2rgb([this.hue, this.sat, this.val]));
-            return tmp;
+            return colorx.rgb2hsl(colorx.hsv2rgb([this.hue, this.sat, this.val]));
         },
         getHSV: function(){
             return [this.hue, this.sat, this.val];
@@ -322,7 +320,7 @@
  // |_____/|_|_|\__,_|\___|_|
 
     ns.Slider = function(ops){
-        this.ops = $.extend({max:100, min:0, pos:50}, ops);
+        this.ops = $.extend({max:100, min:0, pos:0}, ops);
         this.max = this.ops.max;
         this.min = this.ops.min;
         this.position = this.ops.pos;
@@ -411,6 +409,10 @@
             this.dc.fillRect(0, 0, this.ops.canvas.width, this.ops.canvas.height);
 
             //draw text
+            this.dc.textAlign = "center";
+            this.dc.textBaseline = "middle";
+            this.dc.fillStyle = 'white';
+            this.dc.fillText(''+this.position, this.ops.canvas.width/2, this.ops.canvas.height/2);
             //draw cursor
             var w = this.ops.canvas.width;
 
@@ -445,7 +447,7 @@
         this.position = ops.r || 0;
         this.G = ops.g || 0;
         this.B = ops.b || 0;
-        ns.Slider.call(this, $.extend({r:0, g:0, b:0, max:255}, ops));
+        ns.Slider.call(this, $.extend({r:255, g:0, b:0, max:255, pos:255}, ops));
     }
     ns.SliderRed.prototype = Object.create(ns.Slider.prototype);
     ns.SliderRed.prototype.constructor = ns.SliderRed;
@@ -480,7 +482,7 @@
         this.R = ops.r || 0;
         this.position = ops.g || 0;
         this.B = ops.b || 0;
-        ns.Slider.call(this, $.extend({r:0, g:0, b:0, max:255}, ops));
+        ns.Slider.call(this, $.extend({r:255, g:0, b:0, max:255}, ops));
     }
     ns.SliderGreen.prototype = Object.create(ns.Slider.prototype);
     ns.SliderGreen.prototype.constructor = ns.SliderGreen;
@@ -500,7 +502,7 @@
     }
 
     ns.SliderGreen.prototype.getRGB = function(){
-        return [this.position, this.G, this.B];
+        return [this.R, this.position, this.B];
     }
 
 
@@ -515,7 +517,7 @@
         this.R = ops.r || 0;
         this.G = ops.g || 0;
         this.position = ops.b || 0;
-        ns.Slider.call(this, $.extend({r:0, g:0, b:0, max:255}, ops));
+        ns.Slider.call(this, $.extend({r:255, g:0, b:0, max:255}, ops));
     }
     ns.SliderBlue.prototype = Object.create(ns.Slider.prototype);
     ns.SliderBlue.prototype.constructor = ns.SliderBlue;
@@ -535,7 +537,7 @@
     }
 
     ns.SliderBlue.prototype.getRGB = function(){
-        return [this.position, this.G, this.B];
+        return [this.R, this.G, this.position];
     }
 
 
@@ -547,6 +549,40 @@
  //  ____) | | | (_| |  __/ |  | |  | | |__| | |____
  // |_____/|_|_|\__,_|\___|_|  |_|  |_|\____/|______|
 
+    ns.SliderHSV_H = function(ops){
+        this.position = ops.h || 0;
+        this.S = ops.s || 0;
+        this.V = ops.v || 0;
+        ns.Slider.call(this, $.extend({h:0, s:100, v:100, max:360}, ops));
+    }
+    ns.SliderHSV_H.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderHSV_H.prototype.constructor = ns.SliderHSV_H;
+
+    ns.SliderHSV_H.prototype.getFill = function(){
+        var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        grd.addColorStop(0, "hsl(0, 100%, 50%)");
+        grd.addColorStop(1/6, "hsl(60, 100%, 50%)");
+        grd.addColorStop(1/3, "hsl(120, 100%, 50%)");
+        grd.addColorStop(1/2, "hsl(180, 100%, 50%)");
+        grd.addColorStop(2/3, "hsl(240, 100%, 50%)");
+        grd.addColorStop(5/6, "hsl(300, 100%, 50%)");
+        grd.addColorStop(1, "hsl(360, 100%, 50%)");
+        return grd;
+    }
+
+    ns.SliderHSV_H.prototype.setRGB = function(rgb){
+        var tmp = colorx.rgb2hsv(rgb);
+        this.position = tmp[0];
+        this.S = tmp[1];
+        this.V = tmp[2];
+        this.draw();
+    }
+
+    ns.SliderHSV_H.prototype.getRGB = function(){
+        return colorx.hsv2rgb([this.position, this.S, this.V]);
+    }
+
+
 
  //   _____ _ _     _           _    _  _______      __     _____      _______
  //  / ____| (_)   | |         | |  | |/ ____\ \    / /    / ____|  /\|__   __|
@@ -555,6 +591,35 @@
  //  ____) | | | (_| |  __/ |  | |  | |____) |  \  /       ____) / ____ \| |
  // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/    \/       |_____/_/    \_\_|
 
+    ns.SliderHSV_S = function(ops){
+        this.H = ops.h || 0;
+        this.position = ops.s || 0;
+        this.V = ops.v || 0;
+        ns.Slider.call(this, $.extend({h:0, s:100, v:100, pos:100}, ops));
+    }
+    ns.SliderHSV_S.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderHSV_S.prototype.constructor = ns.SliderHSV_S;
+
+    ns.SliderHSV_S.prototype.getFill = function(){
+        // var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        // grd.addColorStop(0, "hsl("+this.H+",0%,"+this.V+"%)");
+        // grd.addColorStop(1, "hsl("+this.H+",100%,"+this.V+"%)");
+        return 'black';
+    }
+
+    ns.SliderHSV_S.prototype.setRGB = function(rgb){
+        var tmp = colorx.rgb2hsv(rgb);
+        this.H = tmp[0];
+        this.position = tmp[1];
+        this.V = tmp[2];
+        this.draw();
+    }
+
+    ns.SliderHSV_S.prototype.getRGB = function(){
+        return colorx.hsv2rgb([this.H, this.position, this.V]);
+    }
+
+
 
  //   _____ _ _     _           _    _  _______      __  __      __     _
  //  / ____| (_)   | |         | |  | |/ ____\ \    / /  \ \    / /\   | |
@@ -562,6 +627,35 @@
  //  \___ \| | |/ _` |/ _ \ '__|  __  |\___ \  \ \/ /______\ \/ / /\ \ | |
  //  ____) | | | (_| |  __/ |  | |  | |____) |  \  /        \  / ____ \| |____
  // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/    \/          \/_/    \_\______|
+
+    ns.SliderHSV_V = function(ops){
+        this.H = ops.h || 0;
+        this.S = ops.s || 0;
+        this.position = ops.v || 0;
+        ns.Slider.call(this, $.extend({h:0, s:100, v:100, pos:100}, ops));
+    }
+    ns.SliderHSV_V.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderHSV_V.prototype.constructor = ns.SliderHSV_V;
+
+    ns.SliderHSV_V.prototype.getFill = function(){
+        // var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        // grd.addColorStop(0, "hsl("+this.H+",0%,"+this.V+"%)");
+        // grd.addColorStop(1, "hsl("+this.H+",100%,"+this.V+"%)");
+        return 'black';
+    }
+
+    ns.SliderHSV_V.prototype.setRGB = function(rgb){
+        var tmp = colorx.rgb2hsv(rgb);
+        this.H = tmp[0];
+        this.S = tmp[1];
+        this.position = tmp[2];
+        this.draw();
+    }
+
+    ns.SliderHSV_V.prototype.getRGB = function(){
+        return colorx.hsv2rgb([this.H, this.S, this.position]);
+    }
+
 
 
  //   _____ _ _     _           _    _  _____ _          _____      _______

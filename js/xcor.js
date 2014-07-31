@@ -7,25 +7,40 @@
         var asda = new colorx.HSVTriangle({canvas:$('#c_triangle3').get(0), border:.5, hue:75});
 
         var blu = new colorx.Slider({canvas:$('#c_slider').get(0)});
-        var rgb_R = new colorx.SliderRed({canvas:$('#c_slider_red').get(0), pos:30});
-        var rgb_G = new colorx.SliderGreen({canvas:$('#c_slider_green').get(0), pos:30});
-        var rgb_B = new colorx.SliderBlue({canvas:$('#c_slider_blue').get(0), pos:30});
+        var rgb_R = new colorx.SliderRed({canvas:$('#c_slider_red').get(0)});
+        var rgb_G = new colorx.SliderGreen({canvas:$('#c_slider_green').get(0)});
+        var rgb_B = new colorx.SliderBlue({canvas:$('#c_slider_blue').get(0)});
 
+        var hsv_H = new colorx.SliderHSV_H({canvas:$('#c_slider_hsv_h').get(0)});
+        var hsv_S = new colorx.SliderHSV_S({canvas:$('#c_slider_hsv_s').get(0)});
+        var hsv_V = new colorx.SliderHSV_V({canvas:$('#c_slider_hsv_v').get(0)});
 
-        rgb_R.setCallback(function(o){
-            tri.setRGB(o.getRGB());
-        });
+        var obs = [tri, bla, asda, rgb_R, rgb_G, rgb_B, hsv_H, hsv_S, hsv_V];
 
-        tri.setCallback(function(o){
-            var rgb = o.getRGB();
+        var alreadyIn = true;
+
+        function callback(sender){
+            var rgb = sender.getRGB();
+
+            if(alreadyIn) return;
+
+            alreadyIn = true;
+
+            obs.forEach(function(o){
+                if(o != sender){
+                    o.setRGB(rgb);
+                }
+            });
+
             $('#teste').css({'background-color':'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'});
 
-            rgb_R.setRGB([rgb[0], rgb[1], rgb[2]]);
-            rgb_G.setRGB([rgb[0], rgb[1], rgb[2]]);
-            rgb_B.setRGB([rgb[0], rgb[1], rgb[2]]);
+            alreadyIn = false;
+        }
+
+        obs.forEach(function(o){
+            o.setCallback(callback);
         });
-
-
+        alreadyIn = false;
 
 
         $("#2hsv").click(function(){
