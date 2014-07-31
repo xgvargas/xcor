@@ -444,10 +444,10 @@
  // |_____/|_|_|\__,_|\___|_|  |_|  \_\______|_____/
 
     ns.SliderRed = function(ops){
-        this.position = ops.r || 0;
+        this.position = ops.r || 255;
         this.G = ops.g || 0;
         this.B = ops.b || 0;
-        ns.Slider.call(this, $.extend({r:255, g:0, b:0, max:255, pos:255}, ops));
+        ns.Slider.call(this, $.extend({max:255, pos:255}, ops));
     }
     ns.SliderRed.prototype = Object.create(ns.Slider.prototype);
     ns.SliderRed.prototype.constructor = ns.SliderRed;
@@ -479,10 +479,10 @@
  // |_____/|_|_|\__,_|\___|_|   \_____|_|  \_\______|______|_| \_|
 
     ns.SliderGreen = function(ops){
-        this.R = ops.r || 0;
+        this.R = ops.r || 255;
         this.position = ops.g || 0;
         this.B = ops.b || 0;
-        ns.Slider.call(this, $.extend({r:255, g:0, b:0, max:255}, ops));
+        ns.Slider.call(this, $.extend({max:255}, ops));
     }
     ns.SliderGreen.prototype = Object.create(ns.Slider.prototype);
     ns.SliderGreen.prototype.constructor = ns.SliderGreen;
@@ -514,10 +514,10 @@
  // |_____/|_|_|\__,_|\___|_|  |____/|______\____/|______|
 
     ns.SliderBlue = function(ops){
-        this.R = ops.r || 0;
+        this.R = ops.r || 255;
         this.G = ops.g || 0;
         this.position = ops.b || 0;
-        ns.Slider.call(this, $.extend({r:255, g:0, b:0, max:255}, ops));
+        ns.Slider.call(this, $.extend({max:255}, ops));
     }
     ns.SliderBlue.prototype = Object.create(ns.Slider.prototype);
     ns.SliderBlue.prototype.constructor = ns.SliderBlue;
@@ -551,9 +551,9 @@
 
     ns.SliderHSV_H = function(ops){
         this.position = ops.h || 0;
-        this.S = ops.s || 0;
-        this.V = ops.v || 0;
-        ns.Slider.call(this, $.extend({h:0, s:100, v:100, max:360}, ops));
+        this.S = ops.s || 100;
+        this.V = ops.v || 100;
+        ns.Slider.call(this, $.extend({max:360}, ops));
     }
     ns.SliderHSV_H.prototype = Object.create(ns.Slider.prototype);
     ns.SliderHSV_H.prototype.constructor = ns.SliderHSV_H;
@@ -593,9 +593,9 @@
 
     ns.SliderHSV_S = function(ops){
         this.H = ops.h || 0;
-        this.position = ops.s || 0;
-        this.V = ops.v || 0;
-        ns.Slider.call(this, $.extend({h:0, s:100, v:100, pos:100}, ops));
+        this.position = ops.s || 100;
+        this.V = ops.v || 100;
+        ns.Slider.call(this, $.extend({pos:100}, ops));
     }
     ns.SliderHSV_S.prototype = Object.create(ns.Slider.prototype);
     ns.SliderHSV_S.prototype.constructor = ns.SliderHSV_S;
@@ -630,9 +630,9 @@
 
     ns.SliderHSV_V = function(ops){
         this.H = ops.h || 0;
-        this.S = ops.s || 0;
-        this.position = ops.v || 0;
-        ns.Slider.call(this, $.extend({h:0, s:100, v:100, pos:100}, ops));
+        this.S = ops.s || 100;
+        this.position = ops.v || 100;
+        ns.Slider.call(this, $.extend({pos:100}, ops));
     }
     ns.SliderHSV_V.prototype = Object.create(ns.Slider.prototype);
     ns.SliderHSV_V.prototype.constructor = ns.SliderHSV_V;
