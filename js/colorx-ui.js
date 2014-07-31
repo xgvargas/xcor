@@ -665,6 +665,34 @@
  //  ____) | | | (_| |  __/ |  | |  | |____) | |____    ____) / ____ \| |
  // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/|______|  |_____/_/    \_\_|
 
+    ns.SliderHSL_S = function(ops){
+        this.H = ops.h || 0;
+        this.position = ops.s || 100;
+        this.L = ops.l || 50;
+        ns.Slider.call(this, $.extend({pos:100}, ops));
+    }
+    ns.SliderHSL_S.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderHSL_S.prototype.constructor = ns.SliderHSL_S;
+
+    ns.SliderHSL_S.prototype.getFill = function(){
+        var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        grd.addColorStop(0, "hsl("+this.H+",0%,"+this.L+"%)");
+        grd.addColorStop(1, "hsl("+this.H+",100%,"+this.L+"%)");
+        return grd;
+    }
+
+    ns.SliderHSL_S.prototype.setRGB = function(rgb){
+        var tmp = colorx.rgb2hsl(rgb);
+        this.H = tmp[0];
+        this.position = tmp[1];
+        this.L = tmp[2];
+        this.draw();
+    }
+
+    ns.SliderHSL_S.prototype.getRGB = function(){
+        return colorx.hsl2rgb([this.H, this.position, this.L]);
+    }
+
 
  //   _____ _ _     _           _    _  _____ _          _      _____ _______
  //  / ____| (_)   | |         | |  | |/ ____| |        | |    |_   _|__   __|
@@ -672,6 +700,35 @@
  //  \___ \| | |/ _` |/ _ \ '__|  __  |\___ \| | |______| |      | |    | |
  //  ____) | | | (_| |  __/ |  | |  | |____) | |____    | |____ _| |_   | |
  // |_____/|_|_|\__,_|\___|_|  |_|  |_|_____/|______|   |______|_____|  |_|
+
+    ns.SliderHSL_L = function(ops){
+        this.H = ops.h || 0;
+        this.S = ops.s || 100;
+        this.position = ops.l || 50;
+        ns.Slider.call(this, $.extend({pos:50}, ops));
+    }
+    ns.SliderHSL_L.prototype = Object.create(ns.Slider.prototype);
+    ns.SliderHSL_L.prototype.constructor = ns.SliderHSL_L;
+
+    ns.SliderHSL_L.prototype.getFill = function(){
+        var grd = this.dc.createLinearGradient(0, 0, this.ops.canvas.width, 0);
+        grd.addColorStop(0, "hsl("+this.H+","+this.S+"%,0%)");
+        grd.addColorStop(.5, "hsl("+this.H+","+this.S+"%,50%)");
+        grd.addColorStop(1, "hsl("+this.H+","+this.S+"%,100%)");
+        return grd;
+    }
+
+    ns.SliderHSL_L.prototype.setRGB = function(rgb){
+        var tmp = colorx.rgb2hsl(rgb);
+        this.H = tmp[0];
+        this.S = tmp[1];
+        this.position = tmp[2];
+        this.draw();
+    }
+
+    ns.SliderHSL_L.prototype.getRGB = function(){
+        return colorx.hsl2rgb([this.H, this.S, this.position]);
+    }
 
 
 

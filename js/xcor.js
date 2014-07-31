@@ -15,7 +15,10 @@
         var hsv_S = new colorx.SliderHSV_S({canvas:$('#c_slider_hsv_s').get(0)});
         var hsv_V = new colorx.SliderHSV_V({canvas:$('#c_slider_hsv_v').get(0)});
 
-        var obs = [tri, bla, asda, rgb_R, rgb_G, rgb_B, hsv_H, hsv_S, hsv_V];
+        var hsl_S = new colorx.SliderHSL_S({canvas:$('#c_slider_hsl_s').get(0)});
+        var hsl_L = new colorx.SliderHSL_L({canvas:$('#c_slider_hsl_l').get(0)});
+
+        var obs = [tri, bla, asda, rgb_R, rgb_G, rgb_B, hsv_H, hsv_S, hsv_V, hsl_S, hsl_L];
 
         var alreadyIn = true;
 
