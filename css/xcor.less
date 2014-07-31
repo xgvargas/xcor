@@ -5,15 +5,27 @@
 @thumb-radius: 8px;
 @thumb-shadow: 3px;
 
-.triangle{
-  cursor:pointer;
-  margin:8px;
-  background-color:silver;
+body{
+    background-color: silver;
 }
 
-.slider{
-    .triangle
+.triangle{
+  cursor:pointer;
+  // margin:8px;
+  // background-color:white;
 }
+
+.sliders{
+    font-size:0;  //use this to remove space between sliders (weird)
+
+    li{
+        canvas{
+            cursor:pointer;
+            margin:1px;
+        }
+    }
+}
+
 
 input[type='range'] {
         -webkit-appearance: none;

@@ -19,40 +19,63 @@
     <script type="text/javascript" src="js/colorx-ui.js"></script>
     <script type="text/javascript" src="js/xcor.js"></script>
   </head><body>
-    <canvas id="c_triangle" class="triangle" width="300" height="300"></canvas>
-    <canvas id="c_triangle2" class="triangle" width="80" height="80"></canvas>
-    <canvas id="c_triangle3" class="triangle" width="200" height="200"></canvas>
 
-    <canvas id="c_slider" class="slider" width="300" height="50"></canvas>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4" style="height:200px;background-color:red;" id="teste">
 
-    <canvas id="c_slider_red" class="slider" width="200" height="30"></canvas>
-    <canvas id="c_slider_green" class="slider" width="200" height="30"></canvas>
-    <canvas id="c_slider_blue" class="slider" width="200" height="30"></canvas>
+        </div>
+        <div class="col-md-8">
+          <input type="text" id="ina">
+          <input type="text" id="inb">
+          <input type="text" id="inc">
+          <input type="text" id="ind">
+          <button id="2hsv">2hsv</button>
+          <button id="2hsl">2hsl</button>
+          <button id="2hsi">2hsi</button>
+          <button id="2cmyk">2cmyk</button>
+          <button id="hsv2">hsv2</button>
+          <button id="hsl2">hsl2</button>
+          <button id="hsi2">hsi2</button>
+          <button id="cmyk2">cmyk2</button>
+          <br>
+          <output id="mout"></output>
+        </div>
+      </div><!--row-->
 
-    <canvas id="c_slider_hsv_h" class="slider" width="200" height="30"></canvas>
-    <canvas id="c_slider_hsv_s" class="slider" width="200" height="30"></canvas>
-    <canvas id="c_slider_hsv_v" class="slider" width="200" height="30"></canvas>
+      <div class="row">
+        <div class="col-md-4">
+          <canvas id="c_triangle" class="triangle" width="300" height="300"></canvas>
+        </div>
+        <div class="col-md-4">
+          <ul class="sliders">
+            <li><canvas id="c_slider_red" class="slider" width="200" height="30"></canvas></li>
+            <li><canvas id="c_slider_green" class="slider" width="200" height="30"></canvas></li>
+            <li><canvas id="c_slider_blue" class="slider" width="200" height="30"></canvas></li>
 
-    <canvas id="c_slider_hsl_s" class="slider" width="200" height="30"></canvas>
-    <canvas id="c_slider_hsl_l" class="slider" width="200" height="30"></canvas>
+            <li><canvas id="c_slider_hsv_h" class="slider" width="200" height="30"></canvas></li>
+            <li><canvas id="c_slider_hsv_s" class="slider" width="200" height="30"></canvas></li>
+            <li><canvas id="c_slider_hsv_v" class="slider" width="200" height="30"></canvas></li>
 
-    <div style="height:200px;width:200px;background-color:blue;" id="teste"></div>
+            <li><canvas id="c_slider_hsl_s" class="slider" width="200" height="30"></canvas></li>
+            <li><canvas id="c_slider_hsl_l" class="slider" width="200" height="30"></canvas></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          palhetas...
+        </div>
+      </div><!--row-->
 
-    <br><br>
-    <input type="text" id="ina">
-    <input type="text" id="inb">
-    <input type="text" id="inc">
-    <input type="text" id="ind">
-    <button id="2hsv">2hsv</button>
-    <button id="2hsl">2hsl</button>
-    <button id="2hsi">2hsi</button>
-    <button id="2cmyk">2cmyk</button>
-    <button id="hsv2">hsv2</button>
-    <button id="hsl2">hsl2</button>
-    <button id="hsi2">hsi2</button>
-    <button id="cmyk2">cmyk2</button>
-    <br>
-    <output id="mout"></output>
+      <div class="row">
+        <div class="col-md-12">
+          <canvas id="c_triangle2" class="triangle" width="80" height="80"></canvas>
+          <canvas id="c_triangle3" class="triangle" width="200" height="200"></canvas>
+
+          <canvas id="c_slider" class="slider" width="300" height="50"></canvas>
+        </div>
+      </div><!--row-->
+
+    </div><!--container-->
 
   </body>
 </html>

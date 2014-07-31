@@ -411,11 +411,17 @@
             //draw text
             this.dc.textAlign = "center";
             this.dc.textBaseline = "middle";
+            this.dc.font = "18px Arial"
             this.dc.fillStyle = 'white';
+
+            ///////////////////////
+            //ver isso:  http://stackoverflow.com/questions/16985098/html5-inverse-text-color-on-canvas
+            ///////////////////////
+
             this.dc.fillText(''+this.position, this.ops.canvas.width/2, this.ops.canvas.height/2);
+
             //draw cursor
             var w = this.ops.canvas.width;
-
             var p = this.max-this.min;
             var pp = w/p;
             var ppp = pp*this.position;
