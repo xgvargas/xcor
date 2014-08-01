@@ -22,49 +22,51 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-md-4" style="height:200px;background-color:red;" id="teste">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td>
+                <div style="width:300px;height:200px;background-color:red;" id="teste">
+                </div>
+              </td><td>
+                <input type="text" id="ina">
+                <input type="text" id="inb">
+                <input type="text" id="inc">
+                <input type="text" id="ind">
+                <button id="2hsv">2hsv</button>
+                <button id="2hsl">2hsl</button>
+                <button id="2hsi">2hsi</button>
+                <button id="2cmyk">2cmyk</button>
+                <button id="hsv2">hsv2</button>
+                <button id="hsl2">hsl2</button>
+                <button id="hsi2">hsi2</button>
+                <button id="cmyk2">cmyk2</button>
+                <output id="mout"></output>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <canvas id="c_triangle" class="triangle" width="300" height="300"></canvas>
+              </td><td>
+                <ul class="sliders">
+                  <li><canvas id="c_slider_red" class="slider" width="200" height="30"></canvas></li>
+                  <li><canvas id="c_slider_green" class="slider" width="200" height="30"></canvas></li>
+                  <li><canvas id="c_slider_blue" class="slider" width="200" height="30"></canvas></li>
 
-        </div>
-        <div class="col-md-8">
-          <input type="text" id="ina">
-          <input type="text" id="inb">
-          <input type="text" id="inc">
-          <input type="text" id="ind">
-          <button id="2hsv">2hsv</button>
-          <button id="2hsl">2hsl</button>
-          <button id="2hsi">2hsi</button>
-          <button id="2cmyk">2cmyk</button>
-          <button id="hsv2">hsv2</button>
-          <button id="hsl2">hsl2</button>
-          <button id="hsi2">hsi2</button>
-          <button id="cmyk2">cmyk2</button>
-          <br>
-          <output id="mout"></output>
-        </div>
-      </div><!--row-->
+                  <li><canvas id="c_slider_hsv_h" class="slider" width="200" height="30"></canvas></li>
+                  <li><canvas id="c_slider_hsv_s" class="slider" width="200" height="30"></canvas></li>
+                  <li><canvas id="c_slider_hsv_v" class="slider" width="200" height="30"></canvas></li>
 
-      <div class="row">
-        <div class="col-md-4">
-          <canvas id="c_triangle" class="triangle" width="300" height="300"></canvas>
-        </div>
-        <div class="col-md-4">
-          <ul class="sliders">
-            <li><canvas id="c_slider_red" class="slider" width="200" height="30"></canvas></li>
-            <li><canvas id="c_slider_green" class="slider" width="200" height="30"></canvas></li>
-            <li><canvas id="c_slider_blue" class="slider" width="200" height="30"></canvas></li>
-
-            <li><canvas id="c_slider_hsv_h" class="slider" width="200" height="30"></canvas></li>
-            <li><canvas id="c_slider_hsv_s" class="slider" width="200" height="30"></canvas></li>
-            <li><canvas id="c_slider_hsv_v" class="slider" width="200" height="30"></canvas></li>
-
-            <li><canvas id="c_slider_hsl_s" class="slider" width="200" height="30"></canvas></li>
-            <li><canvas id="c_slider_hsl_l" class="slider" width="200" height="30"></canvas></li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          palhetas...
-        </div>
-      </div><!--row-->
+                  <li><canvas id="c_slider_hsl_s" class="slider" width="200" height="30"></canvas></li>
+                  <li><canvas id="c_slider_hsl_l" class="slider" width="200" height="30"></canvas></li>
+                </ul>
+              </td><td>
+                palhetas...
+              </td>
+            </tr>
+          </table>
+        </div><!-- col -->
+      </div><!-- row -->
 
       <div class="row">
         <div class="col-md-12">
