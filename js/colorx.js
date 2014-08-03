@@ -67,6 +67,9 @@ http://ariya.blogspot.com.br/2008/07/converting-between-hsl-and-hsv.html
                 break;
         }
 
+        if(h < 0){
+            h += 360;
+        }
         l = (cmax+cmin)/2;
         s = delta/(1-Math.abs(2*l-1));
 
