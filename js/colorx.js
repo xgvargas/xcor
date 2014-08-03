@@ -3,6 +3,8 @@ http://www.rapidtables.com/convert/color/index.htm
 http://www.had2know.com/technology/hsi-rgb-color-converter-equations.html
 http://codeitdown.com/hsl-hsb-hsv-color/
 http://ariya.blogspot.com.br/2008/07/converting-between-hsl-and-hsv.html
+
+http://www.easyrgb.com/?X=MATH
 */
 
 
